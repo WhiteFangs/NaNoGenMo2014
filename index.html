@@ -3,18 +3,19 @@
     <head>
         <title>A Browser's Diary</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="./style.css" media="all" rel="stylesheet" type="text/css">
         <script type="text/javascript" src="./jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="./browserDiary.js"></script>
     </head>
     <body>
-        <div style="text-align: center;">
+        <div id="titleInput">
             <form>
                 <input type="text" required name="novelTitle">
                 <input type="button" onclick="initDiary(this.form.novelTitle.value);" value="Generate the Novel">
             </form>
         </div>
         <div id="novel">
-           
+
         </div>
     </body>
 </html>
