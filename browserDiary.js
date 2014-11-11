@@ -1,12 +1,15 @@
 
 function initDiary (novelTitle){
-  var i = countWords();
-  getLorem(i);
+  $.post("./lorem.php", {'novelTitle' : novelTitle}, function(data){
+    $("#novel").append("<br>" + i + " : <br>" + data);
+    var i = countWords();
+    getLorem(i);
+  });
 }
 
 function getLorem(i){
-  if (i<500){
-    $.get("./lorem.php", function(data){
+  if (i<1000){
+    $.post("./lorem.php", function(data){
       $("#novel").append("<br>" + i + " : <br>" + data);
       i = countWords();
       getLorem(i);
