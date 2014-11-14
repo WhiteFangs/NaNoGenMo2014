@@ -4,7 +4,7 @@ $unixdate = $_POST["unixdate"];
 if (isset($unixdate)) {
   //Adding more than a day but less than a week to the date
   $unixdate += rand(84600, 592200);
-  $date = gmdate("l F jS, Y, g:i a", $unixdate);
+  $date = gmdate("l F \\t\h\e jS, Y, g:i a", $unixdate);
   $novelTitle = $_POST["novelTitle"];
   if (isset($novelTitle)) {
     //Google search
