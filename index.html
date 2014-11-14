@@ -9,8 +9,8 @@
     </head>
     <body>
         <div id="titleInput">
-            <form>
-                <input type="text" required name="novelTitle">
+            <form id="titleForm" method=POST>
+                <input type="text" required name="novelTitle" id="novelTitle">
                 <input type="button" onclick="initDiary(this.form.novelTitle.value);" value="Generate the Novel">
             </form>
         </div>

@@ -1,14 +1,24 @@
+$(document).ready(function() {
+  $('#titleForm').on('submit', function(e) {
+    e.preventDefault();
+    var $this = $(this);
+    var novelTitle = $('#novelTitle').val();
+    initDiary(novelTitle);
+  });
+});
 
 function initDiary (novelTitle){
   document.getElementById("novel").innerHTML = '';
-  $("#novel").append('<h1>' + novelTitle + '</h1>');
-  $.post("./init.php", function(data){
-    data = JSON.parse(data);
-    displayDate(data.unixdate, data.date);
-    displayBrowserInfo(data.infos, data.unixdate);
-    var i = countWords();
-    initSearch(novelTitle, data.unixdate);
-  });
+  if(novelTitle.trim().length != 0){
+    $("#novel").append('<h1>' + novelTitle + '</h1>');
+    $.post("./init.php", function(data){
+      data = JSON.parse(data);
+      displayDate(data.unixdate, data.date);
+      displayBrowserInfo(data.infos, data.unixdate);
+      var i = countWords();
+      initSearch(novelTitle, data.unixdate);
+    });
+  }
 }
 
 function initSearch(novelTitle, unix){
