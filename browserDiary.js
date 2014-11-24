@@ -9,13 +9,14 @@ $(document).ready(function() {
 
 function initDiary (novelTitle){
   document.getElementById("novel").innerHTML = '';
-  if(novelTitle.trim().length != 0){
+  if(novelTitle.trim().length !== 0){
     $("#novel").append('<h1>' + novelTitle + '</h1>');
     $.post("./init.php", function(data){
       data = JSON.parse(data);
       displayDate(data.unixdate, data.date);
-      displayBrowserInfo(data.infos, data.unixdate);
-      var i = countWords();
+      data.novelTitle = novelTitle;
+      displayBrowserInfo(data.infos, data.unixdate, data.novelTitle);
+      var count = countWords('novel');
       initSearch(novelTitle, data.unixdate);
     });
   }
@@ -24,35 +25,62 @@ function initDiary (novelTitle){
 function initSearch(novelTitle, unix){
   $.post("./search.php", {novelTitle : novelTitle, unixdate : unix}, function(data){
     data = JSON.parse(data);
+    console.log(data);
     displayDate(data.unixdate, data.date);
-    $("#" + data.unixdate).append("<br>Page on Google Search: " + data.numPage + "<br><br>" + data.text);
-    var i = countWords();
-    getLorem(i, data.unixdate);
+    displayContent(data);
+    var count = countWords('novel');
+    data.visited = [];
+    novelLoop(count, data);
   });
 }
 
-function getLorem(i, unix){
-  if (i<1000){
-    $.post("./lorem.php", {unixdate : unix}, function(data){
+function novelLoop(count, data){
+  if (count < 50000){
+    delete data.paragraphs;
+    delete data.divs;
+    data.visited.push(data.url);
+    $.post("./loop.php", {unixdate : data.unixdate, googlelinks : data.googlelinks, urls : data.urls, visited: data.visited}, function(data){
       data = JSON.parse(data);
       displayDate(data.unixdate, data.date);
-      $("#" + data.unixdate).append(i + " : <br>" + data.text);
-      i = countWords();
-      getLorem(i, data.unixdate);
+      displayContent(data);
+      count = countWords('novel');
+      console.log(count);
+      novelLoop(count, data);
     });
+  }else{
+    console.log("finished");
   }
 }
 
-function countWords(){
-  var s = document.getElementById("novel").innerHTML, count;
+function displayContent(data){
+  $("#" + data.unixdate).append('Today, I visited <a href="'+ data.url + '">' + data.url + "</a>.<br><br>");
+  if(data.paragraphs.length > 0){
+    for(var i = 0; i < data.paragraphs.length; i++){
+        $("#" + data.unixdate).append(data.paragraphs[i] + "<br><br>");
+        if(countWords(data.unixdate) > 2000){
+          j = data.paragraphs.length;
+        }
+    }
+  }else{
+    for(var j = 0; j < data.divs.length; j++){
+        $("#" + data.unixdate).append(data.divs[j] + "<br><br>");
+        if(countWords(data.unixdate) > 2000){
+          j = data.divs.length;
+        }
+    }
+  }
+}
+
+function countWords(id){
+  var s = document.getElementById(id).innerHTML, count;
   s = s.replace(/(^\s*)|(\s*$)/gi,"");
   s = s.replace(/[ ]{2,}/gi," ");
   s = s.replace(/\n /,"\n");
   count = s.split(' ').length;
-  return (count);
+  return count;
 }
 
-function displayBrowserInfo(infos, unix){
+function displayBrowserInfo(infos, unix, novelTitle){
   var OSName="Unknown OS";
   if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
   if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
@@ -85,15 +113,11 @@ function displayBrowserInfo(infos, unix){
       browserName = navigator.appName;
     }
   }
-  if(navigator.cookieEnabled){
-    var cookies = "Oh, and I like cookies.";
-  }else{
-    var cookies = "Oh, and I don't like cookies.";
-  }
+  var cookies = (navigator.cookieEnabled) ? "Oh, and I like cookies." : "Oh, and I don't like cookies.";
 
   $("#" + unix).append("My name is " + navigator.appName + ' ' + browserName + ", I'm a web browser and this is my personal diary. <br>Actually, my full name is " +
   navigator.appVersion + ', but everybody calls me ' + browserName + '.<br>I live in a ' + OSName + ' running computer, in ' + infos.city + ', ' + infos.country_name +
-  '.<br>My exact address is ' + infos.ip + '. <br>' + cookies + '<br><br>');
+  '.<br>My exact address is ' + infos.ip + '. <br>' + cookies + '<br><br>Ok, I presented myself. Let\'s see what can I talk about now. Hm, yes, I know... <b>' + novelTitle + '</b>.<br><br>');
 }
 
 function displayDate(unix, date){

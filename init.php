@@ -1,7 +1,8 @@
 <?php
+include('./functions.php');
 
 //Browser Infos
-$infos = file_get_contents('http://freegeoip.net/json/'.$_SERVER['REMOTE_ADDR']);
+$infos = getCURLOutput('http://freegeoip.net/json/'.$_SERVER['REMOTE_ADDR']);
 $infos = json_decode($infos);
 //Initial date between 2011 and 2012
 $unixdate = rand(1300000000, 1350000000);
