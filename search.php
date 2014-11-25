@@ -20,6 +20,7 @@ if (isset($unixdate)) {
           array_push($links, $result->url);
       }
       $haveContent = false;
+      $searchAgain = false;
       $linknb = 0;
       while(!$haveContent){
         $pageHTML = getCURLOutput($links[$linknb]);
@@ -28,36 +29,37 @@ if (isset($unixdate)) {
         $pageHTML = mb_convert_encoding($pageHTML, 'HTML-ENTITIES', "UTF-8");
         @$dom->loadHTML($pageHTML);
         $xpath = new DOMXPath($dom);
-        $divs = $xpath->query("//div");
         $paragraphs = $xpath->query("//p");
         $urls = $xpath->query("//a/@href");
-        $divArray = getContent($divs);
         $paragraphArray = getContent($paragraphs);
         // Urls in the page
         $urlArray = array();
-        $urlDomain = parse_url($links[$linknb]);
-        $urlDomain = $urlDomain['host'];
+        $domainArray = array();
+        $urlDomain = getDomain($links[$linknb]);
         if ($urls->length > 0) {
           for ($i = 0; $i < $urls->length; $i++) {
             $tempurl = $urls->item($i)->value;
               if (strpos($tempurl, $urlDomain) == false && substr($tempurl, 0, 4) == 'http'){
-                if(!in_array($tempurl, $urlArray)){
+                $tempdomain = getDomain($tempurl);
+                if(!in_array($tempurl, $urlArray) && !in_array($tempdomain, $domainArray)){
                   array_push($urlArray, $tempurl);
+                  array_push($domainArray, $tempdomain);
                 }
               }
           }
         }
-        if(sizeof($divArray) > 0 || sizeof($paragraphArray) > 0){
+        if(sizeof($paragraphArray) > 0){
           $haveContent = true;
         }else{
           if($linknb < 8){
             $linknb++;
           }else{
             $haveContent = true;
+            $searchAgain = true;
           }
         }
       }
-      $arr = array('unixdate' => $unixdate, 'date' => $date, 'googlelinks' => $links, 'divs' => $divArray, 'paragraphs' => $paragraphArray, 'url' => $links[$linknb], 'urls' => $urlArray, 'numPage' => $numPage);
+      $arr = array('unixdate' => $unixdate, 'date' => $date, 'googlelinks' => $links, 'paragraphs' => $paragraphArray, 'url' => $links[$linknb], 'urls' => $urlArray, 'domains' => $domainArray, 'numLink' => $linknb, 'searchAgain' => $searchAgain);
       echo json_encode($arr);
     }
   }

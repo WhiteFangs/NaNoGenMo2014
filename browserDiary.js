@@ -10,7 +10,7 @@ $(document).ready(function() {
 function initDiary (novelTitle){
   document.getElementById("novel").innerHTML = '';
   if(novelTitle.trim().length !== 0){
-    $("#novel").append('<h1>' + novelTitle + '</h1>');
+    $("#novel").append('<h1 id="title">' + novelTitle + '</h1>');
     $.post("./init.php", function(data){
       data = JSON.parse(data);
       displayDate(data.unixdate, data.date);
@@ -26,26 +26,38 @@ function initSearch(novelTitle, unix){
   $.post("./search.php", {novelTitle : novelTitle, unixdate : unix}, function(data){
     data = JSON.parse(data);
     console.log(data);
-    displayDate(data.unixdate, data.date);
-    displayContent(data);
-    var count = countWords('novel');
-    data.visited = [];
-    novelLoop(count, data);
+    if(data.searchAgain === true){
+      initSearch($('#title').text(), data.unixdate);
+    }else{
+      displayDate(data.unixdate, data.date);
+      displayContent(data);
+      var count = countWords('novel');
+      data.visited = [];
+      novelLoop(count, data);
+    }
   });
 }
 
 function novelLoop(count, data){
   if (count < 50000){
     delete data.paragraphs;
-    delete data.divs;
     data.visited.push(data.url);
-    $.post("./loop.php", {unixdate : data.unixdate, googlelinks : data.googlelinks, urls : data.urls, visited: data.visited}, function(data){
-      data = JSON.parse(data);
-      displayDate(data.unixdate, data.date);
-      displayContent(data);
-      count = countWords('novel');
-      console.log(count);
-      novelLoop(count, data);
+    $.post("./loop.php", {unixdate : data.unixdate, googlelinks : data.googlelinks, urls : data.urls, domains : data.domains, visited: data.visited, numLink: data.numLink}, function(data){
+      try{
+        data = JSON.parse(data);
+        if(data.searchAgain === true){
+          console.log("search again");
+          initSearch($('#title').text(), data.unixdate);
+        }else{
+          displayDate(data.unixdate, data.date);
+          displayContent(data);
+          count = countWords('novel');
+          console.log(count);
+          novelLoop(count, data);
+        }
+      }catch(e){
+        console.log(data);
+      }
     });
   }else{
     console.log("finished");
@@ -58,14 +70,7 @@ function displayContent(data){
     for(var i = 0; i < data.paragraphs.length; i++){
         $("#" + data.unixdate).append(data.paragraphs[i] + "<br><br>");
         if(countWords(data.unixdate) > 2000){
-          j = data.paragraphs.length;
-        }
-    }
-  }else{
-    for(var j = 0; j < data.divs.length; j++){
-        $("#" + data.unixdate).append(data.divs[j] + "<br><br>");
-        if(countWords(data.unixdate) > 2000){
-          j = data.divs.length;
+          i = data.paragraphs.length;
         }
     }
   }

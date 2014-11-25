@@ -28,4 +28,12 @@ function getCURLOutput($url){
   return $output;
 }
 
+function getDomain($url){
+  $urlInfos = parse_url($url);
+  $host = $urlInfos['host'];
+  preg_match('/[^.]+\.[^.]+$/', $host, $output);
+  $urlDomain = $output[0];
+  return $urlDomain;
+}
+
 ?>
