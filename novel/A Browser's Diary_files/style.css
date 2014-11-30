@@ -1,0 +1,35 @@
+body {
+  font-family: monospace;
+}
+
+#titleInput{
+  margin: 3em auto;
+  text-align: center;
+}
+
+#novel {
+  max-width: 750px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 2em;
+  word-break: break-word;
+}
+
+#novel h1{
+  text-align: center;
+  text-decoration: underline;
+  font-size: 4em;
+}
+
+#novel .date{
+  font-style: italic;
+  color: grey;
+  margin-left: 1em;
+  font-weight: bold;
+}
+
+#novel p{
+  margin-top: 2em;
+  padding-bottom: 1em;
+  border-bottom: dotted 0.2em grey;
+}
