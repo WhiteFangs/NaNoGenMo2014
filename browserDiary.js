@@ -6,11 +6,6 @@ $(document).ready(function() {
     initDiary(novelTitle);
   });
 
-  String.prototype.randomUpper = function() {
-    var idx = Math.floor(Math.random()*this.length);
-    return (this.slice(0,idx) + this.charAt(idx).toUpperCase() + this.slice(idx));
-  };
-
   String.prototype.randomMadness = function() {
     var idx = Math.floor(Math.random()*this.length);
     var rand = Math.random();
@@ -25,8 +20,6 @@ $(document).ready(function() {
     var stop = Math.floor(Math.random()*this.length/10);
     for(var i = 0; i < stop; i++){
       s = s + noise.charAt(Math.floor(Math.random()*noise.length));
-      this.randomUpper();
-      this.randomMadness();
     }
     return (this.slice(0,idx) + s + this.slice(idx));
   };
@@ -67,11 +60,12 @@ function novelLoop(count, data){
   if (count < 50000){
     delete data.paragraphs;
     data.visited.push(data.url);
-    $.post("./loop.php", {unixdate : data.unixdate, googlelinks : data.googlelinks, urls : data.urls, domains : data.domains, visited: data.visited, numLink: data.numLink}, function(data){
+    $.post("./loop.php", {unixdate : data.unixdate, googlelinks : data.googlelinks, urls : data.urls, domains : data.domains, visited: data.visited, numLink: data.numLink, counter: data.counter}, function(data){
       try{
         data = JSON.parse(data);
         if(data.searchAgain === true){
           initSearch($('#title').text(), data.unixdate);
+          console.log('searchAgain' + data.counter);
         }else{
           displayDate(data.unixdate, data.date);
           displayContent(data);
@@ -146,6 +140,8 @@ function displayContent(data){
       if(rand < countWords('novel')/75000){
         for (var j=0; j< (countWords('novel')/8000); j++){
           data.paragraphs[i] = data.paragraphs[i].randomNoise();
+          data.paragraphs[i] = (Math.random() > 0.7) ? data.paragraphs[i].toUpperCase() : data.paragraphs[i];
+          data.paragraphs[i] = data.paragraphs[i].randomMadness();
         }
       }
       $("#" + data.unixdate).append(data.paragraphs[i] + "<br><br>");
