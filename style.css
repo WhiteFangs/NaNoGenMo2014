@@ -12,6 +12,7 @@ body {
   margin-right: auto;
   margin-left: auto;
   margin-top: 2em;
+  word-break: break-word;
 }
 
 #novel h1{
