@@ -12,7 +12,7 @@ if (isset($unixdate)) {
     //Google search
     $links = array();
     while(sizeof($links) < 20){
-      $numPage = rand(5, 30);
+      $numPage = rand(2, 50);
       $googleSearch = getCURLOutput('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&rsz=large&start='.$numPage.'&q='.urlencode($novelTitle));
       $json = json_decode($googleSearch);
       if(is_array($json->responseData->results)){
@@ -70,7 +70,7 @@ if (isset($unixdate)) {
         }
       }
     }
-    $arr = array('unixdate' => $unixdate, 'date' => $date, 'googlelinks' => $links, 'paragraphs' => $paragraphArray, 'url' => $links[$linknb], 'urls' => $urlArray, 'domains' => $domainArray, 'numLink' => $linknb, 'searchAgain' => $searchAgain, 'lang' => $lang);
+    $arr = array('unixdate' => $unixdate, 'date' => $date, 'googlelinks' => $links, 'paragraphs' => $paragraphArray, 'url' => $links[$linknb], 'urls' => $urlArray, 'domains' => $domainArray, 'numLink' => $linknb, 'searchAgain' => $searchAgain, 'lang' => $lang, 'counter' => 0);
     echo json_encode($arr);
   }
 }
