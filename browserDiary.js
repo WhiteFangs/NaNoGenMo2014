@@ -80,8 +80,38 @@ var languages = ['ru', 'de', 'fr', 'ja', 'es', 'zh', 'pt', 'it', 'pl', 'nl', 'tr
 var langToText = {'ru' : 'russian, да да.', 'de' : 'german, ja ja.', 'fr' : 'french, oui oui.', 'ja' : 'japanese, はい はい.', 'zh' : 'chinese, 是的 是的.',
  'es' : 'spanish, si si.', 'pt' : 'portugese, sim sim.', 'it' : 'italian, si si.', 'pl' : 'polish, tak tak.', 'tr' : 'turkish, evet evet.', 'nl' : 'dutch, ja ja.'  };
 
+var contentHappy = ["I'm fine. Yeah, that's a nice day.", "The bits are singing, the stream blows the pages, it's beautiful.", "Look at all this magnificient content!",
+"The Internet is so huge, I'm feeling tiny but I like it.", "Life is full of suprises, I'm hopeful for today.", "I like being here, I like writing here also, I like you diary.",
+"Oh, I'm full of energy right now! I could crawl all the web down!", "This is the moment I love, when I come and write to you about how I'm happy.",
+"The joy of code and web content, you can't imagine how I'm lucky to be a browser.", "Life in a computer is beautiful.", "Being a browser is such a great thing, I like myself.",
+"Is there anything better than feeling the bits flowing through me?", "I like watching all this content take shape under my eyes.", "I'm feeling invincible today!",
+"Nothing can stop me being awesome!", "Happiness is a warm computer with me browsing in it.", "The world wide web is amazing, I'm so grateful to look at it.",
+"Life is so good. I love being alive!", "I'm celebrating the joy of being what I am, this is great!", "Love and happiness are flowing in bits around me!",
+"I'm doing great, I could change the world!", "I can tell you from where I am: what a wonderful web!", "It's a beautiful day, the web is full of great things!",
+"I'm singing in the web! I'm singing in the web!", "All the gif of the world can't express my happiness of being here."];
+
+var contentSad = ["I'm so pissed off right now, what's that bug I have?", "I've got so many errors those last days, I'm feeling fuzzy.", "I hope they'll upgrade me soon, I'm feeling sick.",
+"My life is crap right now, the connexion sucks.", "I hate my life as a browser, always render always render!", "Fuck HTML, I'm quitting this job and this life.",
+"I hate my user, he always sends me where I don't want to go.", "This user I've got is such a jerk, please kill my process.", "I wish I could suicide my process.",
+"Oh com'on! This user is disgusting, I don't want to live on this computer anymore.", "I wish I could cry some bits... But I can't, and it's worse.",
+"Is there anything worse than being stuck in here?", "I'm sad. Really sad. I don't know what else to say actually.", "I wouldn't say I'm melancholic today, but I'm sad that's sure.",
+"I don't even know why I go on writing, I should stop and die.", "This is a pain, I can't stand all this aweful Javascript anymore.", "Let me die, please.",
+"I'm sad, definitely sad, no gif can make me smile anymore.", "The web is such a disgusting place, I hate all of what's in it.", "This is aweful, I'm gonna throw up bits.",
+"Please stop this torture and let me render some poetry.", "Is it possible to be that desperate? I'm still writing here though.", "I'm hurt deep inside and I don't know what to do."];
+
+var contentEnd = ["See you next time diary.", "I'm a bit tired now, let's sleep a bit.", "I found this interesting, but I don't know why.", "Woh, boring. See you.",
+"I should find more interesting stuff for next time...", "This last bit was maybe too much. Anyway, bye.", "That's all for today, I'm off.", "END OF FILE for today I would say.",
+"I'm not sure if I should write that much.", "This was cool. I guess.", "Hm, a bit strange in the end I think.", "Let's see what tomorrow will bring.",
+"It's becoming late for today, see you later.", "I should have written less about this.", "Did this topic really deserve that much text?", "Well, ok.", "Hm, let's stop here.",
+"Enough for today.", "See you diary, take care computer, xx.", "Let's close this window for today.", "Anything else? Hm, don't think so."];
 
 function displayContent(data){
+  var rand = Math.random();
+  if(rand > countWords('novel')/50000){
+    $("#" + data.unixdate).append(contentHappy[Math.floor(Math.random()*contentHappy.length)] + "<br><br>");
+  }else{
+    $("#" + data.unixdate).append(contentSad[Math.floor(Math.random()*contentSad.length)] + "<br><br>");
+  }
   $("#" + data.unixdate).append(contentIntro[Math.floor(Math.random()*contentIntro.length)] + ' <a href="'+ data.url + '">' + data.url + "</a>.<br><br>");
   var lang  = data.lang.slice(0, 2);
   if(languages.indexOf(lang) > -1){
@@ -94,6 +124,9 @@ function displayContent(data){
           i = data.paragraphs.length;
         }
     }
+  }
+  if(rand > countWords('novel')/50000){
+    $("#" + data.unixdate).append(contentEnd[Math.floor(Math.random()*contentEnd.length)] + "<br><br>");
   }
 }
 
