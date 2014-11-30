@@ -5,12 +5,38 @@ $(document).ready(function() {
     var novelTitle = $('#novelTitle').val();
     initDiary(novelTitle);
   });
+
+  String.prototype.randomUpper = function() {
+    var idx = Math.floor(Math.random()*this.length);
+    return (this.slice(0,idx) + this.charAt(idx).toUpperCase() + this.slice(idx));
+  };
+
+  String.prototype.randomMadness = function() {
+    var idx = Math.floor(Math.random()*this.length);
+    var rand = Math.random();
+    var s = (rand > 0.5) ? '!!!!!!': "....." ;
+    return (this.slice(0,idx) + s + this.slice(idx + 1)) ;
+  };
+
+  String.prototype.randomNoise = function() {
+    var idx = Math.floor(Math.random()*this.length);
+    var noise = "abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#é~!§:/;.?,+-*ç^¨µ$=}{'|[]&<>";
+    var s = '';
+    var stop = Math.floor(Math.random()*this.length/10);
+    for(var i = 0; i < stop; i++){
+      s = s + noise.charAt(Math.floor(Math.random()*noise.length));
+      this.randomUpper();
+      this.randomMadness();
+    }
+    return (this.slice(0,idx) + s + this.slice(idx));
+  };
 });
 
 function initDiary (novelTitle){
   document.getElementById("novel").innerHTML = '';
+  $("#novel").append('<h1 id="title"></h1>');
   if(novelTitle.trim().length !== 0){
-    $("#novel").append('<h1 id="title">' + novelTitle + '</h1>');
+    $("#title").append(novelTitle);
     $.post("./init.php", function(data){
       data = JSON.parse(data);
       displayDate(data.unixdate, data.date);
@@ -25,7 +51,6 @@ function initDiary (novelTitle){
 function initSearch(novelTitle, unix){
   $.post("./search.php", {novelTitle : novelTitle, unixdate : unix}, function(data){
     data = JSON.parse(data);
-    console.log(data);
     if(data.searchAgain === true){
       initSearch($('#title').text(), data.unixdate);
     }else{
@@ -46,7 +71,6 @@ function novelLoop(count, data){
       try{
         data = JSON.parse(data);
         if(data.searchAgain === true){
-          console.log("search again");
           initSearch($('#title').text(), data.unixdate);
         }else{
           displayDate(data.unixdate, data.date);
@@ -119,10 +143,15 @@ function displayContent(data){
   }
   if(data.paragraphs.length > 0){
     for(var i = 0; i < data.paragraphs.length; i++){
-        $("#" + data.unixdate).append(data.paragraphs[i] + "<br><br>");
-        if(countWords(data.unixdate) > 2000){
-          i = data.paragraphs.length;
+      if(rand < countWords('novel')/75000){
+        for (var j=0; j< (countWords('novel')/8000); j++){
+          data.paragraphs[i] = data.paragraphs[i].randomNoise();
         }
+      }
+      $("#" + data.unixdate).append(data.paragraphs[i] + "<br><br>");
+      if(countWords(data.unixdate) > 2000){
+        i = data.paragraphs.length;
+      }
     }
   }
   if(rand > countWords('novel')/50000){
@@ -174,6 +203,7 @@ function displayBrowserInfo(infos, unix, novelTitle){
   }
   var cookies = (navigator.cookieEnabled) ? "Oh, and I like cookies." : "Oh, and I don't like cookies.";
   var infosLocal = (infos.city.length > 0) ? infos.city + ', ' + infos.country_name : infos.country_name;
+
 
   $("#" + unix).append("My name is " + navigator.appName + ' ' + browserName + ", I'm a web browser and this is my personal diary. <br>Actually, my full name is " +
   navigator.appVersion + ', but everybody calls me ' + browserName + '.<br>I live in a ' + OSName + ' running computer, in ' + infosLocal +
