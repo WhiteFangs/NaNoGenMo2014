@@ -20,12 +20,10 @@ if (isset($unixdate)) {
   while(!$haveContent){
     $max = sizeof($urlArray);
     if($max > 1 && time()-$start < 60){
-      // $linknb = rand(0, $max);
-      // $currentUrl = $urlArray[$linknb];
       $currentUrl = array_reduce($urlArray, function ($a, $b) { return strlen($a) > strlen($b) ? $a : $b; });
       $linknb = array_search($currentUrl, $urlArray);
     }else{
-      if($numLink < 8){
+      if($numLink < 20){
         $linknb = $max;
         array_push($googlelinks[$numLink], $urlArray);
       }else{
@@ -41,12 +39,18 @@ if (isset($unixdate)) {
       $paragraphs = $xpath->query("//p");
       $urls = $xpath->query("//a/@href");
       $paragraphArray = getContent($paragraphs);
+      $lang = $xpath->query("//html/@lang");
+      if ($lang->length > 0) {
+        $lang = $lang->item(0)->value;
+      }else{
+        $lang = "undefined";
+      }
       // Urls in the page
       $urlDomain = getDomain($currentUrl);
       if ($urls->length > 0) {
         for ($i = 0; $i < $urls->length; $i++) {
           $tempurl = $urls->item($i)->value;
-            if (strpos($tempurl, $urlDomain) == false && substr($tempurl, 0, 4) == 'http'){
+          if (!strpos($tempurl, $urlDomain) && substr($tempurl, 0, 4) == 'http' && !strpos($tempurl, '.jpg') && !strpos($tempurl, '.png') && !strpos($tempurl, '.pdf') && !strpos($tempurl, '.gif')){
               $tempdomain = getDomain($tempurl);
               if(!in_array($tempurl, $urlArray) && !in_array($tempdomain, $domainArray)){
                 array_push($urlArray, $tempurl);
@@ -66,7 +70,7 @@ if (isset($unixdate)) {
       $paragraphArray = array();
     }
   }
-  $arr = array('unixdate' => $unixdate, 'date' => $date, 'googlelinks' => $googlelinks, 'paragraphs' => $paragraphArray, 'url' => $currentUrl, 'urls' => $urlArray, 'domains' => $domainArray,'visited' => $visited, 'searchAgain' => $searchAgain);
+  $arr = array('unixdate' => $unixdate, 'date' => $date, 'googlelinks' => $googlelinks, 'paragraphs' => $paragraphArray, 'url' => $currentUrl, 'urls' => $urlArray, 'domains' => $domainArray,'visited' => $visited, 'searchAgain' => $searchAgain, 'lang' => $lang);
   echo json_encode($arr);
 }
 ?>
