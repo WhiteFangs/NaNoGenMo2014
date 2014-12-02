@@ -43,5 +43,5 @@ At first, I even had the idea of analyzing the meta tags, Javascript and CSS fil
    * Length / Size of the page: different reactions can be imagined to different values of this
 
 [1]: https://github.com/dariusk/NaNoGenMo-2014/
-[2]: http://louphole.com/apps/nano/
-[3]: http://louphole.com/apps/nano/novel/A%20Browser's%20Diary.html
+[2]: http://louphole.com/apps/NaNoGenMo2014/
+[3]: http://louphole.com/apps/NaNoGenMo2014/novel/A%20Browser's%20Diary.html
