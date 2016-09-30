@@ -56,8 +56,10 @@ function initSearch(novelTitle, unix){
   });
 }
 
+window.wordLimit = 1000;
+
 function novelLoop(count, data){
-  if (count < 50000){
+  if (count < wordLimit){
     delete data.paragraphs;
     data.visited.push(data.url);
     $.post("./loop.php", {unixdate : data.unixdate, googlelinks : data.googlelinks, urls : data.urls, domains : data.domains, visited: data.visited, numLink: data.numLink, counter: data.counter}, function(data){
@@ -125,7 +127,7 @@ var contentEnd = ["See you next time diary.", "I'm a bit tired now, let's sleep 
 
 function displayContent(data){
   var rand = Math.random();
-  if(rand > countWords('novel')/50000){
+  if(rand > countWords('novel')/wordLimit){
     $("#" + data.unixdate).append(contentHappy[Math.floor(Math.random()*contentHappy.length)] + "<br><br>");
   }else{
     $("#" + data.unixdate).append(contentSad[Math.floor(Math.random()*contentSad.length)] + "<br><br>");
@@ -150,7 +152,7 @@ function displayContent(data){
       }
     }
   }
-  if(rand > countWords('novel')/50000){
+  if(rand > countWords('novel')/wordLimit){
     $("#" + data.unixdate).append(contentEnd[Math.floor(Math.random()*contentEnd.length)] + "<br><br>");
   }
 }
